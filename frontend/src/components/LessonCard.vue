@@ -11,7 +11,7 @@
 
         <q-item-section>
           <q-item-label>{{ title }}</q-item-label>
-          <q-item-label caption>{{ date }}</q-item-label>
+          <q-item-label caption>{{ author }}</q-item-label>
         </q-item-section>
       </q-item>
 
@@ -23,7 +23,13 @@
         </q-img>
 
         <q-card-actions vertical class="justify-around q-px-md">
-          <q-btn flat round color="red" icon="favorite" />
+          <q-btn
+            flat
+            round
+            :color="liked ? 'red' : 'black'"
+            icon="favorite"
+            @click="toggleLike"
+          />
           <q-btn flat round color="green" icon="done" />
         </q-card-actions>
       </q-card-section>
@@ -32,7 +38,7 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
   name: "LessonCard",
@@ -42,7 +48,7 @@ export default defineComponent({
       required: true,
     },
 
-    date: {
+    author: {
       type: String,
       default: "",
     },
@@ -63,7 +69,15 @@ export default defineComponent({
     },
   },
   setup() {
+    const liked = ref(false);
+
+    const toggleLike = () => {
+      liked.value = !liked.value;
+    };
+
     return {
+      liked,
+      toggleLike,
       lorem:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     };

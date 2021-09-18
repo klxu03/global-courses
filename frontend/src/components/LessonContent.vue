@@ -1,9 +1,11 @@
 <template>
   <div>
     <div v-if="youtube">
-      <h2>Here is a youtube video</h2>
+      <h3>Here is a youtube video {{ title }}</h3>
+      <q-video :ratio="16 / 9" :src="embed_link" />
     </div>
     <div v-else>Here is the URL Link: {{ link }}</div>
+    <!-- https://stackoverflow.com/questions/2478391/get-youtube-videos-title-with-jquery-using-youtube-api -->
   </div>
 </template>
 
@@ -20,8 +22,20 @@ export default defineComponent({
       type: String,
       required: true,
     },
+    title: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {},
+  setup(props) {
+    const embed_link =
+      "https://www.youtube.com/embed/" + props.link.substring(32, 43);
+
+    console.log("embed_link", embed_link);
+    return {
+      embed_link,
+    };
+  },
 });
 </script>
 

@@ -1,5 +1,5 @@
 <template>
-  <q-header elevated>
+  <q-header bordered class="bg-primary text-white" elevated>
     <q-toolbar>
       <q-btn
         flat
@@ -7,19 +7,32 @@
         round
         icon="menu"
         aria-label="Menu"
+        class="q-mr-sm"
         @click="toggleLeftDrawer"
       />
 
       <q-toolbar-title> {{ title }} </q-toolbar-title>
 
-      <div>Global Courses</div>
+      <q-avatar onclick="console.log('Pressed home');">
+        <input
+          type="image"
+          src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg"
+          onclick="console.log('Pressed home');"
+        />
+      </q-avatar>
+      <div style="visibility: hidden">s</div>
+      <div onclick="console.log('Pressed home');">Global Courses</div>
     </q-toolbar>
   </q-header>
 
   <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
     <q-list>
       <q-item-label header>
-        <q-btn-dropdown color="primary" label="Unit 5 - Cellular Respiration">
+        <q-btn-dropdown
+          class="dropdown"
+          color="primary"
+          label="Unit 5 - Cellular Resp"
+        >
           <q-list>
             <q-item clickable v-close-popup @click="onItemClick">
               <q-item-section>
@@ -54,13 +67,14 @@
   <q-page class="flex flex-center">
     <div class="content">
       <LessonContent
-        :youtube="false"
-        link="https://www.w3schools.com/tags/tryit.asp?filename=tryhtml_iframe"
+        :youtube="true"
+        link="https://www.youtube.com/watch?v=AfxxFE3gqAM"
+        :title="'Random Vid Title'"
       />
     </div>
 
     <div class="description">
-      <LessonDescription description="lorem ipsum" />
+      <LessonDescription :description="'lorem ipsum'" />
     </div>
   </q-page>
 </template>
@@ -75,7 +89,9 @@ import LessonDescription from "components/LessonDescription.vue";
 const lessons = [
   {
     title: "Docs",
-    date: "1/1/1",
+    author: "1/1/1",
+    courseID: "12sfd3kj242134",
+    unit: 3,
     ep: 1,
     thumbnail: "https://cdn.quasar.dev/img/avatar2.jpg",
     avatar: "https://cdn.quasar.dev/img/parallax2.jpg",
@@ -83,40 +99,40 @@ const lessons = [
     watched: true,
     description: "lorem ipsum (or can autogenerate from YouTube description)",
     link: "https://google.com",
-    type: "iframe or youtube video or vimeo",
+    youtube: true,
   },
   {
     title: "Github",
-    date: "2/2/2",
+    author: "2/2/2",
     ep: 2,
   },
   {
     title: "Discord Chat Channel",
-    date: "3/3/3",
+    author: "3/3/3",
     ep: 3,
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
   {
     title: "Forum",
-    date: "4/4/4",
+    author: "4/4/4",
     ep: 4,
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
   {
     title: "Twitter",
-    date: "5/5/5",
+    author: "5/5/5",
     ep: 5,
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
   {
     title: "Facebook",
-    date: "6/6/6",
+    author: "6/6/6",
     ep: 6,
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
   {
     title: "Quasar Awesome",
-    date: "7/7/7",
+    author: "7/7/7",
     ep: 7,
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
@@ -160,6 +176,10 @@ export default defineComponent({
 }
 
 .description {
+  width: 100%;
+}
+
+.dropdown {
   width: 100%;
 }
 </style>
