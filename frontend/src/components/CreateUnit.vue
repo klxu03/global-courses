@@ -9,11 +9,12 @@
     <q-separator inset />
 
     <CreateModule
-      v-for="module in currentCourseCreateState.units[unit - 1].modules"
+      v-for="(module, index) in currentCourseCreateState.units[unit - 1]
+        .modules"
       :key="module.ep"
       :title="module.title"
       :author="module.author"
-      :ep="module.ep"
+      :ep="index"
       :unit="unit"
       :avatar="module.avatar"
     />

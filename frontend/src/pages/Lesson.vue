@@ -11,13 +11,13 @@
         @click="toggleLeftDrawer"
       />
 
-      <q-toolbar-title> {{ title }} </q-toolbar-title>
+      <q-toolbar-title> {{ courseName }} </q-toolbar-title>
 
-      <q-avatar onclick="console.log('Pressed home');">
+      <q-avatar>
         <input
           type="image"
           src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg"
-          onclick="console.log('Pressed home');"
+          @click="goHome"
         />
       </q-avatar>
       <div style="visibility: hidden">s</div>
@@ -26,38 +26,15 @@
   </q-header>
 
   <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
+    <LessonDropdown :numUnits="numUnits" @changeUnit="changeUnit($event)" />
     <q-list>
-      <q-item-label header>
-        <q-btn-dropdown
-          class="dropdown"
-          color="primary"
-          label="Unit 5 - Cellular Resp"
-        >
-          <q-list>
-            <q-item clickable v-close-popup @click="onItemClick">
-              <q-item-section>
-                <q-item-label>Unit 1 - Sah</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-close-popup @click="onItemClick">
-              <q-item-section>
-                <q-item-label>Unit 2 - Sah</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item clickable v-close-popup @click="onItemClick">
-              <q-item-section>
-                <q-item-label>Unit 3 - Sah</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown>
-      </q-item-label>
       <LessonCard
-        v-for="lesson in lessons"
+        v-for="(lesson, index) in lessons"
         :key="lesson.title"
         v-bind="lesson"
+        :ep="index + 1"
+        :unit="activeUnit"
+        :courseId="courseId"
       />
     </q-list>
   </q-drawer>
@@ -67,24 +44,112 @@
   <q-page class="flex flex-center">
     <div class="content">
       <LessonContent
-        :youtube="true"
-        link="https://www.youtube.com/watch?v=AfxxFE3gqAM"
-        :title="'Random Vid Title'"
+        :youtube="episode.youtube"
+        :link="episode.link"
+        :title="episode.title"
       />
     </div>
 
     <div class="description">
-      <LessonDescription :description="'lorem ipsum'" />
+      <LessonDescription :description="episode.description" />
     </div>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 
 import LessonCard from "components/LessonCard.vue";
 import LessonContent from "components/LessonContent.vue";
 import LessonDescription from "components/LessonDescription.vue";
+import LessonDropdown from "components/LessonDropdown.vue";
+
+import { currentCourseWatchState } from "src/state";
+import { useRouter, useRoute } from "vue-router";
+
+export default defineComponent({
+  name: "Lesson",
+
+  components: {
+    LessonCard,
+    LessonContent,
+    LessonDescription,
+    LessonDropdown,
+  },
+
+  setup() {
+    const courseName = currentCourseWatchState.state.courseName;
+    const courseId = currentCourseWatchState.state.courseId;
+    const units = ref(currentCourseWatchState.state.units);
+
+    // console.log("units", units.value);
+
+    const numUnits = units.value.length;
+    const activeUnit = ref(0);
+
+    const currentEpisode = computed(() => {
+      return route.params.epId.toString();
+    });
+
+    const episode = computed(() => {
+      const modules = units.value[activeUnit.value].modules;
+      console.log("modules", modules);
+      return modules.find((single) => single.ep == currentEpisode.value);
+    });
+    console.log("episode", episode);
+
+    const route = useRoute();
+    const router = useRouter();
+
+    const changeUnit = (val) => {
+      console.log("Parent changing activeUnit");
+      activeUnit.value = val;
+      router.push(
+        "/course/" +
+          currentCourseWatchState.state.courseId +
+          "/unit/" +
+          (val + 1) +
+          "/ep/1/"
+      );
+    };
+
+    const lessons = computed(() => {
+      console.log("new activeUnit", activeUnit.value);
+      return units.value[activeUnit.value].modules;
+    });
+
+    console.log("lessons", lessons);
+
+    const leftDrawerOpen = ref(false);
+
+    const onItemClick = () => {
+      console.log("Clicked on something");
+    };
+
+    const toggleLeftDrawer = () => {
+      leftDrawerOpen.value = !leftDrawerOpen.value;
+    };
+
+    const goHome = () => {
+      router.push("/");
+    };
+
+    return {
+      numUnits,
+      courseId,
+      courseName,
+      units: units,
+      lessons: lessons,
+      activeUnit,
+      episode,
+      changeUnit,
+      leftDrawerOpen,
+      toggleLeftDrawer,
+      onItemClick,
+      goHome,
+    };
+  },
+});
 
 const lessons = [
   {
@@ -137,37 +202,6 @@ const lessons = [
     thumbnail: "https://cdn.quasar.dev/img/parallax2.jpg",
   },
 ];
-
-export default defineComponent({
-  name: "Lesson",
-
-  components: {
-    LessonCard,
-    LessonContent,
-    LessonDescription,
-  },
-
-  setup() {
-    const leftDrawerOpen = ref(false);
-    const title = ref("Sample title");
-
-    const onItemClick = () => {
-      console.log("Clicked on something");
-    };
-
-    const toggleLeftDrawer = () => {
-      leftDrawerOpen.value = !leftDrawerOpen.value;
-    };
-
-    return {
-      lessons: lessons,
-      title,
-      leftDrawerOpen,
-      toggleLeftDrawer,
-      onItemClick,
-    };
-  },
-});
 </script>
 
 <style lang="scss" scoped>
@@ -176,10 +210,6 @@ export default defineComponent({
 }
 
 .description {
-  width: 100%;
-}
-
-.dropdown {
   width: 100%;
 }
 </style>

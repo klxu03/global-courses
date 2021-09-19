@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 
 export default defineComponent({
   props: {
@@ -28,8 +28,9 @@ export default defineComponent({
     },
   },
   setup(props) {
-    const embed_link =
-      "https://www.youtube.com/embed/" + props.link.substring(32, 43);
+    const embed_link = computed(() => {
+      return "https://www.youtube.com/embed/" + props.link.substring(32, 43);
+    });
 
     console.log("embed_link", embed_link);
     return {

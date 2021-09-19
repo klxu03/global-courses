@@ -19,6 +19,14 @@
 
       <q-input
         filled
+        v-model="link"
+        label="URL Link*"
+        lazy-rules
+        :rules="[(val) => (val && val.length > 0) || 'Please type something']"
+      />
+
+      <q-input
+        filled
         v-model="thumbnail"
         label="Module thumbnail link"
         lazy-rules
@@ -30,8 +38,6 @@
         label="Creator avatar thumbnail link"
         lazy-rules
       />
-
-      <q-input filled v-model="link" label="URL Link" lazy-rules />
 
       <q-input
         filled
@@ -92,11 +98,9 @@ export default defineComponent({
       });
 
       let newEpisodeNumber = 1; // Default episode number is 1, unless there already exists episodes in the unit then you add +1
-      if (currentCourseCreateState.units[props.unit - 1].modules.length != 0) {
-        newEpisodeNumber =
-          currentCourseCreateState.units[props.unit - 1].modules[
-            currentCourseCreateState.units[props.unit - 1].modules.length - 1
-          ].ep + 1;
+      const arr = currentCourseCreateState.units[props.unit - 1].modules;
+      if (arr.length != 0) {
+        newEpisodeNumber = arr[arr.length - 1].ep + 1;
       }
 
       const newEpisode = {

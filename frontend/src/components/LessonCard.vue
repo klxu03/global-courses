@@ -2,7 +2,7 @@
   <div class="q-pa-md row items-start q-gutter-md">
     <!-- <q-item clickable tag="a" target="_blank" :href="link"> -->
     <q-card class="my-card">
-      <q-item clickable>
+      <q-item clickable @click="changeEpisodes">
         <q-item-section avatar>
           <q-avatar>
             <img :src="avatar" />
@@ -30,7 +30,13 @@
             icon="favorite"
             @click="toggleLike"
           />
-          <q-btn flat round color="green" icon="done" />
+          <q-btn
+            flat
+            round
+            :color="watched ? 'green' : 'black'"
+            icon="done"
+            @click="toggleWatched"
+          />
         </q-card-actions>
       </q-card-section>
     </q-card>
@@ -39,6 +45,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 
 export default defineComponent({
   name: "LessonCard",
@@ -67,17 +74,47 @@ export default defineComponent({
       type: String,
       default: "https://cdn.quasar.dev/img/avatar2.jpg",
     },
+
+    unit: {
+      type: Number,
+      required: true,
+    },
+
+    courseId: {
+      type: String,
+      required: true,
+    },
   },
-  setup() {
+  setup(props) {
+    const router = useRouter();
     const liked = ref(false);
+    const watched = ref(false);
 
     const toggleLike = () => {
       liked.value = !liked.value;
     };
 
+    const toggleWatched = () => {
+      watched.value = !watched.value;
+    };
+
+    const changeEpisodes = () => {
+      router.push(
+        "/course/" +
+          props.courseId +
+          "/unit/" +
+          (props.unit + 1) +
+          "/ep/" +
+          props.ep
+      );
+    };
+
     return {
       liked,
       toggleLike,
+      watched,
+      toggleWatched,
+      changeEpisodes,
       lorem:
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     };

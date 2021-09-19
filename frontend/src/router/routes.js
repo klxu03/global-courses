@@ -1,14 +1,16 @@
 const routes = [
   {
     path: "/",
+    component: () => import("layouts/NoLayout.vue"),
+    children: [{ path: "", component: () => import("pages/Home.vue") }],
   },
   {
-    path: "/create",
+    path: "/create/:courseTitle/author/:authorName",
     component: () => import("layouts/NoLayout.vue"),
     children: [{ path: "", component: () => import("pages/Create.vue") }],
   },
   {
-    path: "/course",
+    path: "/course/:courseId/unit/:unitId/ep/:epId",
     component: () => import("layouts/NoLayout.vue"),
     children: [{ path: "", component: () => import("pages/Lesson.vue") }],
   },
